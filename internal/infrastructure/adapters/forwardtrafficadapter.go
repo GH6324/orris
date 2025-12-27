@@ -2,9 +2,9 @@ package adapters
 
 import (
 	"context"
-	"time"
 
 	"github.com/orris-inc/orris/internal/domain/subscription"
+	"github.com/orris-inc/orris/internal/shared/biztime"
 	"github.com/orris-inc/orris/internal/shared/logger"
 )
 
@@ -66,7 +66,8 @@ func (a *ForwardTrafficRecorderAdapter) RecordForwardTraffic(ctx context.Context
 	}
 
 	// Filter Forward-type subscriptions and record usage
-	period := time.Now().Truncate(time.Hour)
+	// Truncate to hour in business timezone, then convert to UTC for storage
+	period := biztime.TruncateToHourInBiz(biztime.NowUTC())
 	recordedCount := 0
 
 	for _, sub := range activeSubscriptions {
